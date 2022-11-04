@@ -1,0 +1,49 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: Publish to TestPyPI
+
+on:
+  workflow_dispatch
+
+jobs:
+  publish:
+    name: Building and publishing to TestPyPI
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [ "3.11" ]
+
+    steps:
+    - uses: actions/checkout@main
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@main
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install PDM
+      uses: pdm-project/setup-pdm@main
+      with:
+        python-version: ${{ matrix.python-version }}
+        version: 2.2.1
+        cache: true
+    - name: Install dependencies
+      run: |
+        pdm install
+    - name: Lint with black
+      run: |
+        pdm run lint
+    - name: Check typing with mypy
+      run: |
+        pdm run mypy
+    - name: Test with pytest
+      run: |
+        pdm run test
+    - name: Build
+      run: |
+        pdm build
+    - name: Publish to Test PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+        repository_url: https://test.pypi.org/legacy/

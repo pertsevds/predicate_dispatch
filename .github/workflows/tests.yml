@@ -1,0 +1,47 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: Tests
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main", "develop" ]
+
+jobs:
+  testing:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [ "3.7", "3.8", "3.9", "3.10", "3.11" ]
+
+    steps:
+    - uses: actions/checkout@main
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@main
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install PDM
+      uses: pdm-project/setup-pdm@main
+      with:
+        python-version: ${{ matrix.python-version }}
+        version: 2.2.1
+        cache: true
+    - name: Install dependencies
+      run: |
+        pdm install
+    - name: Lint with black
+      run: |
+        pdm run lint
+    - name: Check typing with mypy
+      run: |
+        pdm run mypy
+    - name: Test with pytest
+      run: |
+        pdm run test
+    - name: Coveralls GitHub Action
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
