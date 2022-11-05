@@ -15,28 +15,55 @@
 
 """Predicate dispatch"""
 
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple, Iterator
 
 
 ConditionFunction = Callable[[Any], bool]
 CodeFunction = Callable[[Any], Any]
-CallableList = List[Tuple[ConditionFunction, CodeFunction]]
+PredicateTuple = Tuple[ConditionFunction, CodeFunction]
+CallableList = List[PredicateTuple]
 
 
-_conditional_callables: Dict[str, CallableList] = {}
-_conditional_callables_defaults: Dict[str, Optional[CodeFunction]] = {}
+def _default_condition(*_: Any, **__: Any) -> bool:
+    return True
+
+
+class PredicatesList:
+    def __init__(self) -> None:
+        self._list: CallableList = []
+        self._default_func_tuple: Optional[PredicateTuple] = None
+
+    def add(self, condition: ConditionFunction, func: CodeFunction) -> None:
+        if condition is not _default_condition:
+            self._list.append((condition, func))
+        else:
+            self._default_func_tuple = condition, func
+
+    def __iter__(self) -> Iterator[PredicateTuple]:
+        self._n = 0
+        return self
+
+    def __next__(self) -> PredicateTuple:
+        if self._n < len(self._list):
+            x = self._n
+            self._n = x + 1
+            return self._list[x]
+        else:
+            if self._default_func_tuple is not None:
+                return self._default_func_tuple
+            raise StopIteration
+
+
+_conditional_callables: Dict[str, PredicatesList] = {}
 
 
 def _get_qualname(func: CodeFunction) -> str:
     return func.__qualname__
 
 
-def _add_callable(condition: Optional[ConditionFunction], func: CodeFunction) -> None:
+def _add_callable(condition: ConditionFunction, func: CodeFunction) -> None:
     qual_name: str = _get_qualname(func)
-    if condition is not None:
-        _conditional_callables.setdefault(qual_name, []).append((condition, func))
-    else:
-        _conditional_callables_defaults[qual_name] = func
+    _conditional_callables.setdefault(qual_name, PredicatesList()).add(condition, func)
 
 
 def _resolve_callable(
@@ -46,13 +73,10 @@ def _resolve_callable(
     callable_iterator = (
         cc[1] for cc in _conditional_callables[qual_name] if cc[0](*args, **kwargs)
     )
-    return next(
-        callable_iterator,
-        _conditional_callables_defaults.setdefault(qual_name, None),
-    )
+    return next(callable_iterator, None)
 
 
-def predicate(condition: Optional[ConditionFunction] = None) -> CodeFunction:
+def predicate(condition: ConditionFunction = _default_condition) -> CodeFunction:
     """Predicate decorator function"""
 
     def wrapper(func: CodeFunction) -> CodeFunction:
@@ -65,7 +89,9 @@ def predicate(condition: Optional[ConditionFunction] = None) -> CodeFunction:
             if resolved_callable is not None:
                 return resolved_callable(*args, **kwargs)
             else:
-                raise TypeError(f"Predicate for '{_get_qualname(func)}' is not found")
+                raise TypeError(
+                    f"Default predicate for '{_get_qualname(func)}' is not found"
+                )
 
         return wrapped
 

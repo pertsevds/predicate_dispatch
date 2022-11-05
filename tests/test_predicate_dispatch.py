@@ -20,7 +20,7 @@ from predicate_dispatch import predicate
 
 @predicate()
 def foo(v):
-    return "default"
+    return "foo-default"
 
 
 @predicate(lambda v: v == 1)
@@ -63,6 +63,11 @@ def bar(x):
     return True
 
 
+@predicate()
+def baz():
+    return "baz-default"
+
+
 def test_predicate_factorial1():
     assert factorial(1) == 1
 
@@ -88,7 +93,7 @@ def test_predicate_foo3():
 
 
 def test_predicate_foo_default():
-    assert foo("x") == "default"
+    assert foo("x") == "foo-default"
 
 
 def test_predicate_foo_4_5():
@@ -113,3 +118,26 @@ def test_predicate_no_default():
         assert False, "Should throw TypeError exception"
     except TypeError as e:
         assert True
+
+
+def test_predicate_only_default():
+    assert baz() == "baz-default"
+
+
+class TestClassA:
+    @predicate()
+    def foo(self):
+        return "default-from-classA"
+
+
+class TestClassB:
+    @predicate()
+    def foo(self):
+        return "default-from-classB"
+
+
+def test_predicate_two_classes_with_same_function_name():
+    a = TestClassA()
+    b = TestClassB()
+    assert a.foo() == "default-from-classA"
+    assert b.foo() == "default-from-classB"
