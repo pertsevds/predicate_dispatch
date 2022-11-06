@@ -41,8 +41,8 @@ class PredicatesList:
             self._default_func_tuple = condition, func
 
     def __iter__(self) -> Iterator[PredicateTuple]:
-        for x in range(len(self._list)):
-            yield self._list[x]
+        for x in self._list:
+            yield x
         if self._default_func_tuple is not None:
             yield self._default_func_tuple
 
