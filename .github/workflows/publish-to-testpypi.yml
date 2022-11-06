@@ -30,7 +30,10 @@ jobs:
     - name: Install dependencies
       run: |
         pdm install
-    - name: Lint with black
+    - name: Format with black
+      run: |
+        pdm run format
+    - name: Lint with pylint
       run: |
         pdm run lint
     - name: Check typing with mypy

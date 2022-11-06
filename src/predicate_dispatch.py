@@ -30,11 +30,13 @@ def _default_condition(*_: Any, **__: Any) -> bool:
 
 
 class PredicatesList:
+    """Class for a list of predicate functions (lambda condition) and original code functions"""
     def __init__(self) -> None:
         self._list: CallableList = []
         self._default_func_tuple: Optional[PredicateTuple] = None
 
     def add(self, condition: ConditionFunction, func: CodeFunction) -> None:
+        """Add predicate function (lambda condition) and original code function to the list"""
         if condition is not _default_condition:
             self._list.append((condition, func))
         else:
@@ -82,10 +84,9 @@ def predicate(condition: ConditionFunction = _default_condition) -> CodeFunction
             )
             if resolved_callable is not None:
                 return resolved_callable(*args, **kwargs)
-            else:
-                raise TypeError(
-                    f"Default predicate for '{_get_qualname(func)}' is not found"
-                )
+            raise TypeError(
+                f"Default predicate for '{_get_qualname(func)}' is not found"
+            )
 
         return wrapped
 

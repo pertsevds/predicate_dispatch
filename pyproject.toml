@@ -40,12 +40,17 @@ includes = ["src"]
 source-includes = ["tests", "LICENSE", "README.md"]
 
 [tool.pdm.dev-dependencies]
-dev = ["mypy>=0.982", "black>=22.10.0"]
+dev = [
+    "mypy>=0.982",
+    "black>=22.10.0",
+    "pylint>=2.13.9",
+]
 test = ["pytest", "pytest-cov>=4.0.0"]
 
 [tool.pdm.scripts]
 test = "pytest --cov-report lcov:./coverage/lcov.info --cov-report term-missing --cov=predicate_dispatch"
-lint = "black src tests"
+format = "black src tests"
+lint = "pylint src"
 mypy = "mypy src"
 
 [tool.black]
