@@ -65,6 +65,7 @@ def bar(x):
 
 @predicate()
 def baz():
+    """baz-doc"""
     return "baz-default"
 
 
@@ -122,6 +123,14 @@ def test_predicate_no_default():
 
 def test_predicate_only_default():
     assert baz() == "baz-default"
+
+
+def test_predicate_func_baz_name():
+    assert baz.__name__ == "baz"
+
+
+def test_predicate_func_baz_doc():
+    assert baz.__doc__ == "baz-doc"
 
 
 class TestClassA:

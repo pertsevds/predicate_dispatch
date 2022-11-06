@@ -15,6 +15,7 @@
 
 """Predicate dispatch"""
 
+from functools import wraps
 from typing import Any, Callable, Dict, List, Optional, Tuple, Iterator
 
 
@@ -74,6 +75,7 @@ def predicate(condition: ConditionFunction = _default_condition) -> CodeFunction
     def wrapper(func: CodeFunction) -> CodeFunction:
         _add_callable(condition, func)
 
+        @wraps(func)
         def wrapped(*args: Any, **kwargs: Any) -> Any:
             resolved_callable: Optional[CodeFunction] = _resolve_callable(
                 func, *args, **kwargs
