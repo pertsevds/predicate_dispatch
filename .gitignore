@@ -81,3 +81,6 @@ dmypy.json
 
 # ASDF ignore tools file
 .tool-versions
+
+# VSCode
+.vscode/
