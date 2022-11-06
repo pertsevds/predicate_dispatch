@@ -40,18 +40,10 @@ class PredicatesList:
             self._default_func_tuple = condition, func
 
     def __iter__(self) -> Iterator[PredicateTuple]:
-        self._n = 0
-        return self
-
-    def __next__(self) -> PredicateTuple:
-        if self._n < len(self._list):
-            x = self._n
-            self._n = x + 1
-            return self._list[x]
-        else:
-            if self._default_func_tuple is not None:
-                return self._default_func_tuple
-            raise StopIteration
+        for x in range(len(self._list)):
+            yield self._list[x]
+        if self._default_func_tuple is not None:
+            yield self._default_func_tuple
 
 
 _conditional_callables: Dict[str, PredicatesList] = {}
