@@ -1,6 +1,6 @@
 [project]
 name = "predicate_dispatch"
-version = "0.1.7"
+version = "0.1.8"
 description = "Predicative dispatch decorator for Python, based on idea from book \"Functional Programming in Python\"."
 authors = [{ name = "Dmitriy Pertsev", email = "davaeron@gmail.com" }]
 dependencies = []
