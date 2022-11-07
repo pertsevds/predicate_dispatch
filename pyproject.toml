@@ -72,10 +72,7 @@ exclude = '''
 '''
 
 [tool.mypy]
-warn_return_any = true
-warn_unused_configs = true
 show_error_codes = true
-disable_error_code = "no-redef"
 strict = true
 
 [tool.isort]
