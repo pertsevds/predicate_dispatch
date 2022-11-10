@@ -8,7 +8,7 @@
 Predicative dispatch decorator for Python, based on the idea from [Functional Programming in Python](http://www.oreilly.com/programming/free/functional-programming-python.csp).
 
 The module is providing means to specify conditions with a lambda function that determines which function is called.
-The number of arguments in the condition function in the @predicate decorator must be equal to the number of arguments of the wrapped function.
+The number of arguments in the condition function in the `@predicate` decorator must be equal to the number of arguments of the wrapped function.
 
 ## Installation
 
@@ -33,7 +33,7 @@ def factorial(x):
 factorial(5) == 120
 ```
 
-@predicate() - is the default predicate. It is used when none of the other predicates resolves to True.
+`@predicate()` - is the default predicate. It is used when none of the other predicates resolves to True.
 
 ## Caching
 
@@ -130,6 +130,7 @@ When you first call `get_animal(3)` internally it will compare `3` then to `1`, 
 
 ## Limitations
 
+- The number of arguments in the condition function in the `@predicate` decorator must be equal to the number of arguments of the wrapped function.
 - Only one function as an argument in the predicate.
 - Only the last default predicate will be executed.
 
