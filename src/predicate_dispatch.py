@@ -15,7 +15,7 @@
 
 """Predicate dispatch"""
 
-from functools import wraps
+from functools import wraps, lru_cache
 from typing import Any, Callable, Dict, List, Optional, Tuple, Iterator
 
 
@@ -56,7 +56,7 @@ _conditional_callables: Dict[str, PredicatesList] = {}
 
 
 def _get_qualname(func: CodeFunction) -> str:
-    return func.__qualname__
+    return func.__module__ + func.__qualname__
 
 
 def _add_callable(condition: ConditionFunction, func: CodeFunction) -> None:
@@ -74,12 +74,70 @@ def _resolve_callable(
     return next(callable_iterator, None)
 
 
+@lru_cache(maxsize=None)
+def _resolve_callable_cached(
+    func: CodeFunction, *args: Any, **kwargs: Any
+) -> Optional[CodeFunction]:
+    qual_name: str = _get_qualname(func)
+    callable_iterator = (
+        cc[1] for cc in _conditional_callables[qual_name] if cc[0](*args, **kwargs)
+    )
+    return next(callable_iterator, None)
+
+
 def predicate(condition: ConditionFunction = _default_condition) -> CodeFunction:
     """Predicate decorator function"""
 
     def wrapper(func: CodeFunction) -> CodeFunction:
         _add_callable(condition, func)
 
+        @wraps(func)
+        def wrapped(*args: Any, **kwargs: Any) -> Any:
+            resolved_callable: Optional[CodeFunction] = _resolve_callable(
+                func, *args, **kwargs
+            )
+            if resolved_callable is not None:
+                return resolved_callable(*args, **kwargs)
+            raise TypeError(
+                f"Default predicate for '{_get_qualname(func)}' is not found"
+            )
+
+        return wrapped
+
+    return wrapper
+
+
+def predicate_cache(condition: ConditionFunction = _default_condition) -> CodeFunction:
+    """Predicate decorator function that cache choosen function for argument"""
+
+    def wrapper(func: CodeFunction) -> CodeFunction:
+        _add_callable(condition, func)
+
+        @wraps(func)
+        def wrapped(*args: Any, **kwargs: Any) -> Any:
+            resolved_callable: Optional[CodeFunction] = _resolve_callable_cached(
+                func, *args, **kwargs
+            )
+            if resolved_callable is not None:
+                return resolved_callable(*args, **kwargs)
+            raise TypeError(
+                f"Default predicate for '{_get_qualname(func)}' is not found"
+            )
+
+        return wrapped
+
+    return wrapper
+
+
+def predicate_cache_result(
+    condition: ConditionFunction = _default_condition,
+) -> CodeFunction:
+    """Predicate decorator function that cache result"""
+
+    def wrapper(func: CodeFunction) -> CodeFunction:
+        _add_callable(condition, func)
+
+        @lru_cache(maxsize=None)
         @wraps(func)
         def wrapped(*args: Any, **kwargs: Any) -> Any:
             resolved_callable: Optional[CodeFunction] = _resolve_callable(

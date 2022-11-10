@@ -14,6 +14,7 @@
 # limitations under the License.
 
 # type: ignore
+# pylint: skip-file
 
 from predicate_dispatch import predicate
 
