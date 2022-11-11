@@ -157,9 +157,11 @@ def test_predicate_two_classes_with_same_function_name():
 def isint(x):
     return True
 
+
 @predicate()
 def isint(x):
     return False
+
 
 def test_predicate_isint():
     assert isint(1) == True
