@@ -74,7 +74,7 @@ def _resolve_callable(
     return next(callable_iterator, None)
 
 
-@lru_cache(maxsize=None)
+@lru_cache(maxsize=None, typed=True)
 def _resolve_callable_cached(
     func: CodeFunction, *args: Any, **kwargs: Any
 ) -> Optional[CodeFunction]:
@@ -137,7 +137,7 @@ def predicate_cache_result(
     def wrapper(func: CodeFunction) -> CodeFunction:
         _add_callable(condition, func)
 
-        @lru_cache(maxsize=None)
+        @lru_cache(maxsize=None, typed=True)
         @wraps(func)
         def wrapped(*args: Any, **kwargs: Any) -> Any:
             resolved_callable: Optional[CodeFunction] = _resolve_callable(
