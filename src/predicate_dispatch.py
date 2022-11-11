@@ -15,9 +15,8 @@
 
 """Predicate dispatch"""
 
-from functools import wraps, lru_cache
-from typing import Any, Callable, Dict, List, Optional, Tuple, Iterator
-
+from functools import lru_cache, wraps
+from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple
 
 ConditionFunction = Callable[[Any], bool]
 CodeFunction = Callable[[Any], Any]
@@ -32,7 +31,7 @@ def _default_condition(*_: Any, **__: Any) -> bool:
 class _PredicatesList:
     """Class for a list of predicate functions (lambda condition) and original code functions"""
 
-    __slots__: Tuple[str, str] = "_list", "_default_func_tuple"
+    __slots__: Tuple[str, str] = ("_list", "_default_func_tuple")
 
     def __init__(self) -> None:
         self._list: CallableList = []
