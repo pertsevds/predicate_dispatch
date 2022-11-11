@@ -153,19 +153,14 @@ def test_predicate_two_classes_with_same_function_name():
     assert b.foo() == "default-from-classB"
 
 
-@predicate(lambda x: x is int)
+@predicate(lambda x: isinstance(x, int))
 def isint(x):
-    return "int"
-
-@predicate(lambda x: x is object)
-def isint(x):
-    return "object"
+    return True
 
 @predicate()
 def isint(x):
-    return "isint-default"
+    return False
 
 def test_predicate_isint():
-    x = isint(1)
-    y = isint(1)
-    z = isint(2)
+    assert isint(1) == True
+    assert isint("a") == False
