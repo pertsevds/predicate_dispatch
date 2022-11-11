@@ -29,7 +29,7 @@ def _default_condition(*_: Any, **__: Any) -> bool:
     return True
 
 
-class PredicatesList:
+class _PredicatesList:
     """Class for a list of predicate functions (lambda condition) and original code functions"""
 
     __slots__ = "_list", "_default_func_tuple"
@@ -52,7 +52,7 @@ class PredicatesList:
             yield self._default_func_tuple
 
 
-_conditional_callables: Dict[str, PredicatesList] = {}
+_conditional_callables: Dict[str, _PredicatesList] = {}
 
 
 def _get_qualname(func: CodeFunction) -> str:
@@ -61,7 +61,7 @@ def _get_qualname(func: CodeFunction) -> str:
 
 def _add_callable(condition: ConditionFunction, func: CodeFunction) -> None:
     qual_name: str = _get_qualname(func)
-    _conditional_callables.setdefault(qual_name, PredicatesList()).add(condition, func)
+    _conditional_callables.setdefault(qual_name, _PredicatesList()).add(condition, func)
 
 
 def _resolve_callable(
