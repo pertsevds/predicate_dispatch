@@ -51,6 +51,33 @@ You must use the `predicate` decorator if the result of the lambda function in t
 
 If you don't want to dig deeper into the quirks of caching just use the `predicate` decorator.
 
+For example:
+
+```python
+def get_events(x):
+    if x >= time.time():
+        return database.getFutureEvents()
+    if x < time.time():
+        return database.getPastEvents()
+    return []
+```
+
+To this:
+
+```python
+@predicate(lambda x: x >= time.time())
+def get_events(x):
+    return database.getFutureEvents()
+
+@predicate(lambda x: x < time.time())
+def get_events(x):
+    return database.getPastEvents()
+
+@predicate()
+def get_events(x):
+    return []
+```
+
 ### `predicate_cache` - function choice is cached
 
 You may use the `predicate_cache` decorator if the result of the lambda function in the predicate for the same argument `x` does not change over time, but the result from calling the real function will change. This decorator will cache what function was called previously for certain `x`. For example, if you have code like this:
