@@ -157,7 +157,7 @@ When you first call `get_animal(3)` internally it will compare `3` then to `1`, 
 
 ## Limitations
 
-- The number of arguments in the condition function in the `@predicate` decorator must be equal to the number of arguments of the wrapped function.
+- The number of arguments in the condition function in the `@predicate` or `@predicate_cache` or `@predicate_cache_result` decorator must be equal to the number of arguments of the wrapped function.
 - Only one function as an argument in the predicate.
 - Only the last default predicate will be executed.
 
