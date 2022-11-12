@@ -15,7 +15,7 @@
 
 """Predicate dispatch"""
 
-from functools import lru_cache
+from functools import lru_cache, wraps
 from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple
 
 ConditionFunction = Callable[[Any], bool]
@@ -90,6 +90,7 @@ def predicate(condition: ConditionFunction = _default_condition) -> CodeFunction
     def wrapper(func: CodeFunction) -> CodeFunction:
         _add_callable(condition, func)
 
+        @wraps(func)
         def wrapped(*args: Any, **kwargs: Any) -> Any:
             resolved_callable: Optional[CodeFunction] = _resolve_callable(
                 func, *args, **kwargs
@@ -111,6 +112,7 @@ def predicate_cache(condition: ConditionFunction = _default_condition) -> CodeFu
     def wrapper(func: CodeFunction) -> CodeFunction:
         _add_callable(condition, func)
 
+        @wraps(func)
         def wrapped(*args: Any, **kwargs: Any) -> Any:
             resolved_callable: Optional[CodeFunction] = _resolve_callable_cached(
                 func, *args, **kwargs
@@ -135,6 +137,7 @@ def predicate_cache_result(
         _add_callable(condition, func)
 
         @lru_cache(maxsize=None, typed=True)
+        @wraps(func)
         def wrapped(*args: Any, **kwargs: Any) -> Any:
             resolved_callable: Optional[CodeFunction] = _resolve_callable(
                 func, *args, **kwargs
