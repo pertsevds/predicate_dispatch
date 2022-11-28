@@ -180,6 +180,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ```
 
+## Original project
+- [pypd by Juraj Sebin](https://github.com/septumca/pypd)
+
 ## Similar projects
 
 - [plum](https://github.com/wesselb/plum)
