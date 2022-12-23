@@ -113,7 +113,7 @@ def get_logs(x):
     return database.getLogsForOtherAnimal()
 ```
 
-When you first call `get_logs(3)` internally it will compare `3` then to `1`, then `3` to `2`, then `3` to `3` and execute `db.getLogsForFox()`. When you call `get_logs(3)` again it will take the previous function choice from the cache and straightaway execute `db.getLogsForFox()`.
+When you first call `get_logs(3)` internally it will compare `3` to `1`, then `3` to `2`, then `3` to `3` and execute `db.getLogsForFox()`. When you call `get_logs(3)` again it will take the previous function choice from the cache and straightaway execute `db.getLogsForFox()`.
 
 ### `predicate_cache_result` - function result is cached
 
@@ -152,7 +152,7 @@ def get_animal(x):
     return "animal"
 ```
 
-When you first call `get_animal(3)` internally it will compare `3` then to `1`, then `3` to `2`, then `3` to `3` and then return result `"fox"`. When you call `get_animal(3)` again it will take the previous result from the cache and return it.
+When you first call `get_animal(3)` internally it will compare `3` to `1`, then `3` to `2`, then `3` to `3` and then return result `"fox"`. When you call `get_animal(3)` again it will take the previous result from the cache and return it.
 
 
 ## Limitations
